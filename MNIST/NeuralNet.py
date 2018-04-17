@@ -79,10 +79,10 @@ def train(image, label, weight, biases, progress, batchSize):
             j += 1
         if (progress and i + j < len(image)): print(i + j, perfect, "label: %d, prediction: %d" % (label[i + j], getAnswer(output)[1]))
         i += j
-        print("before:", weight)
-        print("nabla:", *nabla)
+        #print("before:", weight)
+        #print("nabla:", *nabla)
         weight = [w + nw for w, nw in zip(weight, nabla)]
-        print("after:", weight)
+        #print("after:", weight)
         #time.sleep(10000)
 
 
