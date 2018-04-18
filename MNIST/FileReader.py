@@ -4,6 +4,8 @@ import numpy as np
 
 class FileReader:
 
+    normalize = np.vectorize(lambda x: x / 255)
+
     def getImages(self, path):
         testFile = open(path, "rb")
         testSize = os.path.getsize(path)
@@ -11,7 +13,7 @@ class FileReader:
         #print(len(test), testSize)
         image = []
         for i in range(len(test[16:]) // 784):
-            image += [test[16 + 784*i : 16 + 784*(i + 1)]]
+            image += [self.normalize(test[16 + 784*i : 16 + 784*(i + 1)])]
         return(np.array(image))
 
     def getLabels(self, path):
