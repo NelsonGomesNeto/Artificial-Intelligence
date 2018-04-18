@@ -125,12 +125,23 @@ def train(batchSize, netKind, viewProgress):
         print(i)
         weight, bias, accuracy = iteration(newImage, newLabel, weight, bias, viewProgress, batchSize)
         print(accuracy, " - ", time.time() - start, " seconds", sep='')
+        fm.saveModel(weight, bias, accuracy)
+    return(weight, bias)
 
-        fm.saveModel(weight, bias, accuracy, startTotal)
+def test(weight, bias):
+    image, label = fm.getImages("t10k-images-idx3-ubyte/data"), fm.getLabels("t10k-labels-idx1-ubyte/data")
+    accuracy = 0
+    for i in range(len(image)):
+        output, rawActivation, activation = feedForward(image[i], weight, bias)
+        if (label[i] == getAnswer(output)[1]): accuracy += 1
+    accuracy /= len(image)
+    print("accuracy =", accuracy)
 
 def lol(arr):
     for i in range(len(arr)):
         arr[i] = round(arr[i], 3)
     return(arr)
 
-train(10, [784, 16, 16, 10], 0)
+#train(10, [784, 16, 16, 10], 0)
+weight, bias, accuracy, simTime = fm.getNeuralNetworkModel()
+test(weight, bias)
