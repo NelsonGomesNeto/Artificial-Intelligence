@@ -1,8 +1,10 @@
 from PIL import Image
 import os
+import time
 import numpy as np
+import pickle
 
-class FileReader:
+class FileManager:
 
     normalize = np.vectorize(lambda x: x / 255)
 
@@ -25,3 +27,17 @@ class FileReader:
         for i in test[8:]:
             label += [i]
         return(np.array(label))
+
+    def saveModel(self, weight, bias, accuracy, startTotal):
+        f = open("model.py", "w")
+        print("import numpy as np", file=f)
+        print("from numpy import array", file=f)
+        print("weight =", weight, file=f)
+        print("bias =", bias, file=f)
+        print("accuracy =", accuracy, file=f)
+        print("simTime =", time.time() - startTotal, file=f)
+        f.close()
+
+    def getNeuralNetworkModel(self):
+        from model import weight, bias, accuracy, simTime
+        return(weight, bias, accuracy, simTime)
