@@ -58,34 +58,40 @@ def getError(answer, output):
 def getDerivative(output, answer, error):
     delta = []
     for i in range(len(output)):
-        delta += [(output[i] - (answer == i)) * error]
+        delta += [(output[i] - (answer[i])) * 1]
     return(np.array(delta))
 
 def feedForward(aInput, weight, bias):
     rawActivation, activation = [], [aInput]
+    print("input:", aInput)
     for w, b in zip(weight, bias):
         z = np.dot(w, aInput) + b
         rawActivation += [z]
-        #print(*aInput)
-        aInput = sigmoid(z)
+        print("mid:", w, ".", aInput, "=", z)
+        aInput = z
         activation += [aInput]
+    print("output:", z)
     return(aInput, rawActivation, activation)
 
 def backPropagation(rawActivation, activation, delta, weight, bias):
-    delta *= sigmoidPrime(rawActivation[-1])
-    nablaBias = [delta]
+    #delta *= sigmoidPrime(rawActivation[-1])
+    nablebias = [delta]
+    print(np.array([delta]).transpose(), ".", np.array([activation[-2]]), "=", np.dot(np.array([delta]).transpose(), np.array([activation[-2]])))
     nablaWeight = [np.dot(np.array([delta]).transpose(), np.array([activation[-2]]))]
     for i in range(2, len(activation)):
         #print("before:", weight[i])
         z = rawActivation[-i]
         sp = sigmoidPrime(z)
-        delta = np.dot(np.array(weight[-i+1]).transpose(), np.array(delta)) * sp
+        print()
+        print(np.array(weight[-i+1]).transpose(), ".", np.array(delta), "=", np.dot(np.array(weight[-i+1]).transpose(), np.array(delta)))
+        delta = np.dot(np.array(weight[-i+1]).transpose(), np.array(delta))
         #print(activation[i], delta)
-        nablaBias += [delta]
+        nablebias += [delta]
+        print(np.array([delta]).transpose(), ".", np.array([activation[-i-1]]), "=", np.dot(np.array([delta]).transpose(), np.array([activation[-i-1]])))
         nablaWeight += [np.dot(np.array([delta]).transpose(), np.array([activation[-i-1]]))]
         #print("nablaWeight:", nablaWeight)
         #print("after:", weight[i])
-    return(reversed(nablaWeight), reversed(nablaBias))
+    return(reversed(nablaWeight), reversed(delta))
 
 def iteration(image, label, weight, bias, viewProgress, batchSize):
     i, perfect = 0, 0
@@ -96,49 +102,50 @@ def iteration(image, label, weight, bias, viewProgress, batchSize):
             if (label[i + j] == getAnswer(output)[1]): perfect += 1
             error = getError(label[i + j], output)
             delta = getDerivative(output, label[i + j], error)
-            newNablaWeight, newNablaBias = backPropagation(rawActivation, activation, delta, weight, bias)
-            if (j == 0): nablaWeight, nablaBias = newNablaWeight, newNablaBias
-            else: nablaWeight, nablaBias = [n + nn for n, nn in zip(nablaWeight, newNablaWeight)], [b + bn for b, bn in zip(nablaBias, newNablaBias)]
+            newNablaWeight, newNablabias = backPropagation(rawActivation, activation, delta, weight, bias)
+            if (j == 0): nablaWeight, nablabias = newNablaWeight, newNablabias
+            else: nablaWeight, nablabias = [n + nn for n, nn in zip(nablaWeight, newNablaWeight)], [b + bn for b, bn in zip(nablabias, newNablabias)]
             if (viewProgress and i + j < len(image)): print(i + j, perfect, "label: %d, prediction: %d" % (label[i + j], getAnswer(output)[1]), round(perfect / (i + j + 1), 5), lol(output))
             j += 1
         i += j
         #print("before:", weight)
         #print("nablaWeight:", *nablaWeight)
         weight = [w - nw/batchSize for w, nw in zip(weight, nablaWeight)]
-        bias = [b - nb/batchSize for b, nb in zip(bias, nablaBias)]
+        bias = [b - nb/batchSize for b, nb in zip(bias, nablabias)]
         #print("after:", weight)
     return(weight, bias, perfect / (i + j + 1))
 
 def train(batchSize, netKind, viewProgress, iterations):
-    weight, bias = randomNeuralNetWork(netKind)
-    print("Loaded Neural Network")
-    image, label = getData()
-    print("Loaded Data")
-    startTotal = time.time()
-    print("Training:")
-    for i in range(iterations):
-        start = time.time()
-        qq = list(range(len(image)))
-        shuffle(qq)
-        newImage, newLabel = [], []
-        for j in qq:
-            newImage += [image[j]]
-            newLabel += [label[j]]
-        print("iteration:", i)
-        weight, bias, accuracy = iteration(newImage, newLabel, weight, bias, viewProgress, batchSize)
-        print(accuracy, " - ", time.time() - start, " seconds", sep='')
-        fm.saveModel(weight, bias, accuracy, startTotal)
-    return(weight, bias)
+    weight, bias = [[np.array([1, 2])], [np.array([0]), np.array([1])]], [0, [0, 0]]
+    print(weight)
+    inin, y = [0, 1], [1, 0]
+    output, rawActivation, activation = feedForward(inin, weight, bias)
+    delta = getDerivative(output, y, 0)
+    print("target:", y)
+    print("delta:", delta)
+    newNablaWeight, newNablaBias = backPropagation(rawActivation, activation, delta, weight, bias)
+    weight = [w - nw for w, nw in zip(weight, newNablaWeight)]
+    print(weight)
+    print("new iteration")
+    inin, y = [0, 1], [1, 0]
+    output, rawActivation, activation = feedForward(inin, weight, bias)
+    delta = getDerivative(output, y, 0)
+    print("target:", y)
+    print("delta:", delta)
+    newNablaWeight, newNablaBias = backPropagation(rawActivation, activation, delta, weight, bias)
+    weight = [w - nw for w, nw in zip(weight, newNablaWeight)]
+    print(weight)
+    output, rawActivation, activation = feedForward(inin, weight, bias)
+    print("result:", output)
 
-def test(weight, bias, eachImage):
+def test(weight, bias):
     image, label = fm.getImages("t10k-images-idx3-ubyte/data"), fm.getLabels("t10k-labels-idx1-ubyte/data")
     accuracy = 0
     for i in range(len(image)):
         output, rawActivation, activation = feedForward(image[i], weight, bias)
-        if (eachImage):
-            print(lol(output), "->",  getAnswer(output)[1])
-            vm.generateImage(image[i], label[i])
-            input()
+        print(output, getAnswer(output)[1])
+        vm.generateImage(image[i], label[i])
+        input()
         if (label[i] == getAnswer(output)[1]): accuracy += 1
     accuracy /= len(image)
     print("accuracy =", accuracy)
@@ -148,6 +155,6 @@ def lol(arr):
         arr[i] = round(arr[i], 3)
     return(arr)
 
-#train(10, [784, 10, 10], 0, 30)
-weight, bias, accuracy, simTime = fm.getNeuralNetworkModel()
-test(weight, bias, 1)
+train(10, [784, 10, 10], 0, 30)
+#weight, bias, accuracy, simTime = fm.getNeuralNetworkModel()
+#test(weight, bias)
