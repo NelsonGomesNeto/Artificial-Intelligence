@@ -1,0 +1,12 @@
+Rules:
+a ^ b => c
+c => d
+d => e
+d ^ e => z
+END
+Base:
+a b
+END
+Target:
+z
+END
