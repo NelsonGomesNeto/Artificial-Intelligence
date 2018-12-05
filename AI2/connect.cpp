@@ -2,7 +2,7 @@
 using namespace std;
 const double inf = 1e18;
 struct Movement { int i, j; double value; };
-int n = 3, m = 3, winLineSize = 3;
+int n = 5, m = 5, winLineSize = 4;
 char board[1000][1001], aux[1000][1001];
 
 void printBoard()
@@ -79,9 +79,8 @@ void play()
   {
     Movement mov = miniMax(player == 0 ? 4 : 3);
     board[mov.i][mov.j] = player == 0 ? 'O' : 'X';
-    printf("Player %d at %d %d\n", player + 1, mov.i, mov.j);
+    printf("Player %d at [%d, %d]\n", player + 1, mov.i, mov.j);
     printBoard();
-    printf("Here %d | %.3g\n", winner(), miniMax(4).value);
     player = 1 - player;
   }
   int won = winner();
