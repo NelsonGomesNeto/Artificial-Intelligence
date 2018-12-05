@@ -1,0 +1,13 @@
+3 missionaries, 3 cannibals and 2-sized boat can cross the river in 11 steps (visited 7 states)
+3 missionaries, 3 cannibals and 3-sized boat can cross the river in 5 steps (visited 5 states)
+4 missionaries, 4 cannibals and 3-sized boat can cross the river in 9 steps (visited 8 states)
+100 missionaries, 100 cannibals and 4-sized boat can cross the river in 199 steps (visited 197 states)
+1000 missionaries, 1000 cannibals and 2-sized boat can't cross the river
+1000 missionaries, 1000 cannibals and 3-sized boat can't cross the river
+1000 missionaries, 1000 cannibals and 4-sized boat can cross the river in 1999 steps (visited 1997 states)
+1000 missionaries, 1000 cannibals and 5-sized boat can cross the river in 1993 steps (visited 1994 states)
+1000 missionaries, 1000 cannibals and 6-sized boat can cross the river in 999 steps (visited 1495 states)
+1000 missionaries, 1000 cannibals and 7-sized boat can cross the river in 997 steps (visited 1492 states)
+1000 missionaries, 1000 cannibals and 10-sized boat can cross the river in 499 steps (visited 746 states)
+1000 missionaries, 1000 cannibals and 100-sized boat can cross the river in 41 steps (visited 59 states)
+1000 missionaries, 1000 cannibals and 1000-sized boat can cross the river in 5 steps (visited 5 states)
