@@ -2,7 +2,7 @@
 using namespace std;
 const double inf = 1e18;
 struct Movement { int i, j; double value; };
-int n = 3, m = 3, winLineSize = 3;
+int n = 5, m = 5, winLineSize = 4;
 char board[1000][1001], aux[1000][1001];
 
 void printBoard()

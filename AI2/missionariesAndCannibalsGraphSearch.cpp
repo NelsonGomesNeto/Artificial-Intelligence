@@ -16,7 +16,8 @@ void printSolution()
 {
   for (int m = 0, c = 0, b = 0; m != missionaries || c != cannibals || !b;)
   {
-    printf("[%d %d] river [%d %d] || boat: %s\n", m, c, missionaries - m, cannibals - c, b ? "left" : "right");
+    printf("[m: %4d c: %4d] %s<river> [m: %4d c: %4d] %s|| <send m: %4d c: %4d>\n",
+      missionaries - m, cannibals - c, !b ? "<boat> " : "       ", m, c, b ? "<boat> " : "       ", abs(m - stateParent[m][c][b].missionaries), abs(c - stateParent[m][c][b].cannibals));
     int am = m, ac = c, ab = b;
     m = stateParent[am][ac][ab].missionaries, c = stateParent[am][ac][ab].cannibals, b = stateParent[am][ac][ab].boat;
   }
@@ -41,16 +42,16 @@ int BFS()
     {
       // for (int m = min(s.missionaries, allowedInBoat); m >= 0; m --)
         // for (int c = min(s.cannibals, allowedInBoat); c >= 0; c --)
-      for (int m = 0; m <= min(s.missionaries, allowedInBoat); m ++)
-        for (int c = min(s.cannibals, allowedInBoat); c >= 0; c --)
-          if (m + c > 0 && m + c <= allowedInBoat && validState(s.missionaries, s.cannibals) && visited[s.missionaries - m][s.cannibals - c][!s.boat] == -1)
+      for (int m = 0, em = min(s.missionaries, allowedInBoat); m <= em; m ++)
+        for (int c = (m == 0), ec = min(s.cannibals, allowedInBoat - m); c <= ec/* && m + c <= allowedInBoat*/; c ++)
+          if (validState(s.missionaries, s.cannibals) && visited[s.missionaries - m][s.cannibals - c][!s.boat] == -1)
             q.push({s.missionaries - m, s.cannibals - c, !s.boat, s.step + 1}), stateParent[s.missionaries - m][s.cannibals - c][!s.boat] = s;
     }
     else
     { // The boat cannot cross the river by itself
-      for (int m = 0; m <= min(missionaries - s.missionaries, allowedInBoat); m ++)
-        for (int c = 0; c <= min(cannibals - s.cannibals, allowedInBoat); c ++)
-          if (m + c > 0 && m + c <= allowedInBoat && validState(missionaries - s.missionaries, cannibals - s.cannibals) && visited[s.missionaries + m][s.cannibals + c][!s.boat] == -1)
+      for (int m = 0, em = min(missionaries - s.missionaries, allowedInBoat); m <= em; m ++)
+        for (int c = (m == 0), ec = min(cannibals - s.cannibals, allowedInBoat - m); c <= ec/* && m + c <= allowedInBoat*/; c ++)
+          if (validState(missionaries - s.missionaries, cannibals - s.cannibals) && visited[s.missionaries + m][s.cannibals + c][!s.boat] == -1)
             q.push({s.missionaries + m, s.cannibals + c, !s.boat, s.step + 1}), stateParent[s.missionaries + m][s.cannibals + c][!s.boat] = s;
     }
   }
@@ -76,7 +77,7 @@ int Astar(double (*heuristic)(State&))
     if (s.boat)
     {
       for (int m = 0, em = min(s.missionaries, allowedInBoat); m <= em; m ++)
-        for (int c = (m == 0), ec = min(s.cannibals, allowedInBoat); c <= ec && m + c <= allowedInBoat; c ++)
+        for (int c = (m == 0), ec = min(s.cannibals, allowedInBoat - m); c <= ec/* && m + c <= allowedInBoat*/; c ++)
           if (validState(s.missionaries - m, s.cannibals - c) && visited[s.missionaries - m][s.cannibals - c][!s.boat] == -1)
           {
             State newState = {s.missionaries - m, s.cannibals - c, !s.boat, s.step + 1}; newState.value = heuristic(newState);
@@ -86,7 +87,7 @@ int Astar(double (*heuristic)(State&))
     else
     { // The boat cannot cross the river by itself
       for (int m = 0, em = min(missionaries - s.missionaries, allowedInBoat); m <= em; m ++)
-        for (int c = (m == 0), ec = min(cannibals - s.cannibals, allowedInBoat); c <= ec && m + c <= allowedInBoat; c ++)
+        for (int c = (m == 0), ec = min(cannibals - s.cannibals, allowedInBoat - m); c <= ec/* && m + c <= allowedInBoat*/; c ++)
           if (validState(s.missionaries + m, s.cannibals + c) && visited[s.missionaries + m][s.cannibals + c][!s.boat] == -1)
           {
             State newState = {s.missionaries + m, s.cannibals + c, !s.boat, s.step + 1}; newState.value = heuristic(newState);
@@ -105,9 +106,9 @@ int main()
     // int ans = BFS();
     if (ans != -1)
     {
-      int states = 0; for (int i = 0; i < missionaries; i ++) for (int j = 0; j < cannibals; j ++) for (int k = 0; k < 2; k ++) states += visited[i][j][k] != -1;
+      int states = 0; for (int i = 0; i <= missionaries; i ++) for (int j = 0; j <= cannibals; j ++) for (int k = 0; k < 2; k ++) states += visited[i][j][k] != -1;
       printf("%d missionaries, %d cannibals and %d-sized boat can cross the river in %d steps (visited %d states)\n", missionaries, cannibals, allowedInBoat, ans, states);
-      // printSolution();
+      printSolution();
     }
     else printf("%d missionaries, %d cannibals and %d-sized boat can't cross the river\n", missionaries, cannibals, allowedInBoat);
   }
