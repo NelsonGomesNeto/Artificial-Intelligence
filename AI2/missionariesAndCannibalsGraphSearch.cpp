@@ -16,8 +16,8 @@ void printSolution()
 {
   for (int m = 0, c = 0, b = 0; m != missionaries || c != cannibals || !b;)
   {
-    printf("[m: %4d c: %4d] %sriver [m: %4d c: %4d] %s|| <send m: %4d c: %4d>\n",
-      missionaries - m, cannibals - c, !b ? "<left> " : "       ", m, c, b ? "<right> " : "        ", abs(m - stateParent[m][c][b].missionaries), abs(c - stateParent[m][c][b].cannibals));
+    printf("[m: %4d c: %4d] %s<river> [m: %4d c: %4d] %s|| <send m: %4d c: %4d>\n",
+      missionaries - m, cannibals - c, !b ? "<boat> " : "       ", m, c, b ? "<boat> " : "       ", abs(m - stateParent[m][c][b].missionaries), abs(c - stateParent[m][c][b].cannibals));
     int am = m, ac = c, ab = b;
     m = stateParent[am][ac][ab].missionaries, c = stateParent[am][ac][ab].cannibals, b = stateParent[am][ac][ab].boat;
   }
@@ -106,7 +106,7 @@ int main()
     // int ans = BFS();
     if (ans != -1)
     {
-      int states = 0; for (int i = 0; i < missionaries; i ++) for (int j = 0; j < cannibals; j ++) for (int k = 0; k < 2; k ++) states += visited[i][j][k] != -1;
+      int states = 0; for (int i = 0; i <= missionaries; i ++) for (int j = 0; j <= cannibals; j ++) for (int k = 0; k < 2; k ++) states += visited[i][j][k] != -1;
       printf("%d missionaries, %d cannibals and %d-sized boat can cross the river in %d steps (visited %d states)\n", missionaries, cannibals, allowedInBoat, ans, states);
       printSolution();
     }
