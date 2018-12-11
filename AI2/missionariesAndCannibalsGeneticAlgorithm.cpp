@@ -11,9 +11,10 @@ set<Being> lol;
 vector<State> chromosome;
 
 /* Strategy:
-Chromosome: List of nodes instead of a vector
+Chromosome: List of genes (nodes) instead of a vector
 Crossing: False :)
 Mutation: Generate new genes based on available movements
+Adaption: state.missionaries + state.cannibals + state.boat
 */
 
 int main()
