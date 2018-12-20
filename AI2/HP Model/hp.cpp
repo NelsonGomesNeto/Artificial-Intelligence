@@ -11,6 +11,7 @@ struct State
   int i = 0, j = 0;
   set<pair<int, int>> visited;
   double value;
+  bool operator<(const State &b) const { return(value < b.value); }
 };
 void fillTable(State &state)
 {
@@ -59,15 +60,16 @@ void printState(State &state)
 State bfs()
 {
   State bestState; bestState.value = 1e7;
-  queue<State> q; q.push(State({}));
-  q.front().visited.insert({0, 0});
+  State base; base.visited.insert({0, 0});
+  queue<State> q; q.push(base);
   while (!q.empty())
   {
     State u = q.front(); q.pop();
-    printState(u);
+    // printState(u);
     if (u.direction.size() == hpSize - 1)
     {
-      if (stateEnergy(u, false) < bestState.value) bestState = u;
+      double energy = stateEnergy(u, true); u.value = energy;
+      if (u.value < bestState.value) bestState = u;
       continue;
     }
     for (int k = 0; k < 4; k ++)
@@ -77,7 +79,35 @@ State bfs()
         State next = u; next.direction.push_back(k);
         next.i = u.i + dy[k], next.j = u.j + dx[k];
         next.visited.insert({next.i, next.j});
-        q.push(State({next}));
+        q.push(next);
+      }
+    }
+  }
+  return(bestState);
+}
+
+State Astar()
+{
+  State bestState; bestState.value = 1e7;
+  State base; base.visited.insert({0, 0});
+  priority_queue<State> q; q.push(base);
+  while (!q.empty())
+  {
+    State u = q.top(); q.pop();
+    // printState(u);
+    if (u.direction.size() == hpSize - 1)
+    {
+      if (u.value < bestState.value) bestState = u;
+      continue;
+    }
+    for (int k = 0; k < 4; k ++)
+    {
+      if (!u.visited.count({u.i + dy[k], u.j + dx[k]}))
+      {
+        State next = u; next.direction.push_back(k);
+        next.i = u.i + dy[k], next.j = u.j + dx[k];
+        next.visited.insert({next.i, next.j}), next.value = stateEnergy(next, true);
+        q.push(next);
       }
     }
   }
@@ -89,8 +119,9 @@ int main()
   scanf("%s", hp); hpSize = strlen(hp); for (int i = 0; i < hpSize - 1; i ++) baseEnergy += (hp[i] == 'H') && (hp[i + 1] == 'H');
   printf("Sequence of size %d: %s\n", hpSize, hp);
 
-  State best = bfs();
-  printf("Ended BFS:\n");
+  // State best = bfs();
+  State best = Astar();
+  printf("Ended A*:\n");
   printState(best);
 
   return(0);
