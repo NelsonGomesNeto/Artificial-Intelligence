@@ -1,7 +1,12 @@
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+#include <vector>
+#include <queue>
+#include <set>
+#include <algorithm>
+#include <string.h>
 using namespace std;
 
-int hpSize; char hp[(int) 1e6]; double baseEnergy = 0;
+int hpSize; char hp[(int) 1e6]; double baseEnergy = 0, accumulatedEnergy[1000];
 int dx[4] = {0, 0, 1, -1}, dy[4] = {1, -1, 0, 0}, n, m, si, sj;
 char dop[4 + 1] = {'v', '^', '>', '<'}, table[1000][1000];
 
@@ -10,8 +15,8 @@ struct State
   vector<char> direction;
   int i = 0, j = 0;
   set<pair<int, int>> visited;
-  double value;
-  bool operator<(const State &b) const { return(value < b.value); }
+  double value = 0;
+  bool operator<(const State &b) const { return(value > b.value); }
 };
 void fillTable(State &state)
 {
@@ -88,7 +93,8 @@ State bfs()
 
 State Astar()
 {
-  State bestState; bestState.value = 1e7;
+  int breakCount = 1000;
+  State bestState; bestState.value = 1e7; double bestEnergy = 1e7;
   State base; base.visited.insert({0, 0});
   priority_queue<State> q; q.push(base);
   while (!q.empty())
@@ -97,7 +103,10 @@ State Astar()
     // printState(u);
     if (u.direction.size() == hpSize - 1)
     {
-      if (u.value < bestState.value) bestState = u;
+      double energy = stateEnergy(u, true);
+      if (energy <= bestEnergy) bestState = u, bestEnergy = energy;
+      else breakCount --;
+      if (breakCount == 0) break;
       continue;
     }
     for (int k = 0; k < 4; k ++)
@@ -106,7 +115,7 @@ State Astar()
       {
         State next = u; next.direction.push_back(k);
         next.i = u.i + dy[k], next.j = u.j + dx[k];
-        next.visited.insert({next.i, next.j}), next.value = stateEnergy(next, true);
+        next.visited.insert({next.i, next.j}), next.value = -u.value*0 + stateEnergy(next, true) + accumulatedEnergy[next.direction.size() + 1] * 1;// accumulatedEnergy[next.direction.size()];
         q.push(next);
       }
     }
@@ -116,13 +125,25 @@ State Astar()
 
 int main()
 {
-  scanf("%s", hp); hpSize = strlen(hp); for (int i = 0; i < hpSize - 1; i ++) baseEnergy += (hp[i] == 'H') && (hp[i + 1] == 'H');
-  printf("Sequence of size %d: %s\n", hpSize, hp);
+  while (scanf("%s", hp) != EOF)
+  {
+    getchar();
+    baseEnergy = 0;
+    hpSize = strlen(hp);
+    accumulatedEnergy[0] = 1;
+    for (int i = 0; i < hpSize - 1; i ++)
+    {
+      baseEnergy += (hp[i] == 'H') && (hp[i + 1] == 'H');
+      accumulatedEnergy[i + 1] = baseEnergy + 1;
+    }
+    printf("Sequence of size %d: %s\n", hpSize, hp);
 
-  // State best = bfs();
-  State best = Astar();
-  printf("Ended A*:\n");
-  printState(best);
+    // State best = bfs();
+    State best = Astar();
+    printf("%.0lf\n", stateEnergy(best, true));
+    // printf("Ended A*:\n");
+    // printState(best);
+  }
 
   return(0);
 }
