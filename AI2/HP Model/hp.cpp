@@ -7,15 +7,15 @@
 using namespace std;
 
 int hpSize; char hp[(int) 1e6]; double baseEnergy = 0, accumulatedEnergy[1000];
-int dx[4] = {0, 0, 1, -1}, dy[4] = {1, -1, 0, 0}, n, m, si, sj;
-char dop[4 + 1] = {'v', '^', '>', '<'}, table[1000][1000];
+int dx[4] = {0, 1, 0, -1}, dy[4] = {1, 0, -1, 0}, n, m, si, sj;
+char dop[4 + 1] = {'v', '>', '^', '<'}, table[1000][1000];
 
 struct State
 {
   vector<char> direction;
   int i = 0, j = 0;
-  set<pair<int, int>> visited;
-  double value = 0;
+  set<pair<int, int>> hVisited, pVisited;
+  double value = 0, energy = 0;
   bool operator<(const State &b) const { return(value > b.value); }
 };
 void fillTable(State &state)
@@ -65,7 +65,7 @@ void printState(State &state)
 State bfs()
 {
   State bestState; bestState.value = 1e7;
-  State base; base.visited.insert({0, 0});
+  State base; if (hp[0] == 'P') base.pVisited.insert({0, 0}); else base.hVisited.insert({0, 0});
   queue<State> q; q.push(base);
   while (!q.empty())
   {
@@ -79,11 +79,22 @@ State bfs()
     }
     for (int k = 0; k < 4; k ++)
     {
-      if (!u.visited.count({u.i + dy[k], u.j + dx[k]}))
+      char nextProtein = hp[u.direction.size() + 1];
+      int ii = u.i + dy[k], jj = u.j + dx[k];
+      if ((nextProtein == 'P' && !u.pVisited.count({ii, jj})) || (nextProtein == 'H' && !u.hVisited.count({ii, jj})))
       {
         State next = u; next.direction.push_back(k);
-        next.i = u.i + dy[k], next.j = u.j + dx[k];
-        next.visited.insert({next.i, next.j});
+        next.i = ii, next.j = jj;
+        if (nextProtein == 'P') next.pVisited.insert({ii, jj});
+        else
+        {
+          next.hVisited.insert({ii, jj});
+          next.value = u.value + (hp[u.direction.size()] == 'H');
+          for (int kk = 0; kk < 4; kk ++) next.value -= next.hVisited.count({ii + dy[kk], jj + dx[kk]});
+        }
+        // next.visited.insert({next.i, next.j}), next.value = -u.value*0.05 + ((accumulatedEnergy[next.direction.size() + 1] - 1)*1 + (stateEnergy(next, true) - baseEnergy)) / (accumulatedEnergy[next.direction.size() + 1]);
+        printf("%lf\n", next.value);
+        //-u.value*0 + stateEnergy(next, true) + accumulatedEnergy[next.direction.size() + 1] * 1;// accumulatedEnergy[next.direction.size()];
         q.push(next);
       }
     }
@@ -94,8 +105,8 @@ State bfs()
 State Astar()
 {
   int breakCount = 1000;
-  State bestState; bestState.value = 1e7; double bestEnergy = 1e7;
-  State base; base.visited.insert({0, 0});
+  State bestState; bestState.energy = 1e7;
+  State base; if (hp[0] == 'P') base.pVisited.insert({0, 0}); else base.hVisited.insert({0, 0});
   priority_queue<State> q; q.push(base);
   while (!q.empty())
   {
@@ -103,19 +114,30 @@ State Astar()
     // printState(u);
     if (u.direction.size() == hpSize - 1)
     {
-      double energy = stateEnergy(u, true);
-      if (energy <= bestEnergy) bestState = u, bestEnergy = energy;
+      if (u.energy <= bestState.energy) bestState = u;
       else breakCount --;
       if (breakCount == 0) break;
       continue;
     }
     for (int k = 0; k < 4; k ++)
     {
-      if (!u.visited.count({u.i + dy[k], u.j + dx[k]}))
+      char nextProtein = hp[u.direction.size() + 1];
+      int ii = u.i + dy[k], jj = u.j + dx[k];
+      if (!u.pVisited.count({ii, jj}) && !u.hVisited.count({ii, jj}))
       {
         State next = u; next.direction.push_back(k);
-        next.i = u.i + dy[k], next.j = u.j + dx[k];
-        next.visited.insert({next.i, next.j}), next.value = -u.value*0 + stateEnergy(next, true) + accumulatedEnergy[next.direction.size() + 1] * 1;// accumulatedEnergy[next.direction.size()];
+        next.i = ii, next.j = jj;
+        if (nextProtein == 'P') next.pVisited.insert({ii, jj});
+        else
+        {
+          next.hVisited.insert({ii, jj});
+          next.energy = u.energy; // + (hp[u.direction.size()] == 'H');
+          for (int kk = 0, prevK = (k + 2) % 4; kk < 4; kk ++) if (prevK != kk) next.energy -= next.hVisited.count({ii + dy[kk], jj + dx[kk]});
+          next.value = u.value*0 + next.energy / (4*accumulatedEnergy[next.direction.size()]);
+        }
+        // next.visited.insert({next.i, next.j}), next.value = -u.value*0.05 + ((accumulatedEnergy[next.direction.size() + 1] - 1)*1 + (stateEnergy(next, true) - baseEnergy)) / (accumulatedEnergy[next.direction.size() + 1]);
+        // printf("%lf\n", next.value);
+        //-u.value*0 + stateEnergy(next, true) + accumulatedEnergy[next.direction.size() + 1] * 1;// accumulatedEnergy[next.direction.size()];
         q.push(next);
       }
     }
@@ -136,12 +158,13 @@ int main()
       baseEnergy += (hp[i] == 'H') && (hp[i + 1] == 'H');
       accumulatedEnergy[i + 1] = baseEnergy + 1;
     }
+    accumulatedEnergy[hpSize] = accumulatedEnergy[hpSize - 1];
     printf("Sequence of size %d: %s\n", hpSize, hp);
 
     // State best = bfs();
     State best = Astar();
-    printf("%.0lf\n", stateEnergy(best, true));
-    // printf("Ended A*:\n");
+    printf("Best energy: %.0lf\n", stateEnergy(best, true));
+    fflush(stdout);
     // printState(best);
   }
 
