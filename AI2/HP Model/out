@@ -1,20 +1,149 @@
 Sequence of size 20: HPHPPHHPHPPHPHHPPHPH
 Best energy: -8
+------------------------------
+^ < ^ < v v < ^ ^ < v < v > v > > > ^
+4x6 (start: 2, 5) | Energy: -8
+.PPPP.
+PHHHHP
+HHPHHH
+.PPHP.
+------------------------------
 Sequence of size 24: HHPPHPPHPPHPPHPPHPPHPPHH
 Best energy: -7
+------------------------------
+^ ^ < v v < ^ ^ < v v < ^ < < < ^ < v < v > >
+3x10 (start: 2, 9) | Energy: -7
+.PP...PPPP
+PHHPPHHHHH
+PHH..PPPPH
+------------------------------
 Sequence of size 25: PPHPPHHPPPPHHPPPPHHPPPPHH
 Best energy: -7
+------------------------------
+^ < ^ < v v > v < < ^ ^ ^ ^ < v v v v < < ^ > ^
+5x7 (start: 3, 6) | Energy: -7
+..PP...
+..PPPP.
+.HHHHHP
+PHHHHPP
+PPPPPP.
+------------------------------
 Sequence of size 36: PPPHHPPHHPPPPPHHHHHHHPPHHPPPPHHPPHPP
 Best energy: -10
+------------------------------
+^ ^ < < ^ < v v > > v < v < ^ < ^ ^ < v v v > v < v > > ^ > v > ^ > v
+7x6 (start: 3, 5) | Energy: -10
+..PP..
+HHHHHP
+HHHPPP
+PHHPPP
+PHHP..
+PHHHHP
+PPPPPP
+------------------------------
 Sequence of size 48: PPHPPHHPPHHPPPPPHHHHHHHHHHPPPPPPHHPPHHPPHPPHHHHH
 Best energy: -20
+------------------------------
+^ < ^ < v v v < ^ ^ ^ ^ ^ < v v v v < ^ ^ < v v < v v < < ^ > ^ < < ^ > ^ < ^ > ^ > v v v > ^
+7x11 (start: 4, 10) | Energy: -20
+.PP...PP...
+PHH...PP...
+PHHHHHHPPP.
+PHHHHHHHHHP
+PHHHHHHHH.P
+.PPP...PP..
+.PPP.......
+------------------------------
 Sequence of size 50: PPHPPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH
 Best energy: -17
+------------------------------
+^ < ^ < v < v v > ^ > v v < < v < < ^ > ^ ^ ^ < < v > v < v v < < v > v > ^ > v v < < v v > > ^ <
+11x9 (start: 2, 8) | Energy: -17
+......PP.
+..PPPPHHP
+..PHHHHHP
+..PPPPHH.
+..PPPPHP.
+PPHHPP...
+PHHH.....
+.PHH.....
+.PHP.....
+.HHH.....
+.PHP.....
+------------------------------
 Sequence of size 60: PPHHHPHHHHHHHHPPPHHHHHHHHHHPHPPPHHHHHHHHHHHHPPPPHHHHHHPHHPHP
 Best energy: -30
+------------------------------
+^ ^ < < ^ > > > v > ^ > v > > v < < < < v > > > v < v > v v > ^ ^ ^ ^ > v v v > ^ ^ ^ ^ > > v < v v > v < v < < v > v
+10x12 (start: 3, 2) | Energy: -30
+PHHHHH......
+HHHHHHPP....
+..PHHHHP.PPP
+..PHHHHHHHHP
+.....HHHHHH.
+.....PHHHHHH
+......PHHHHH
+......PPHHP.
+........PH..
+.........P..
+------------------------------
 Sequence of size 64: HHHHHHHHHHHHPHPHPPHHPPHHPPHPPHHPPHHPPHPPHHPPHHPPHPHPHHHHHHHHHHHH
 Best energy: -31
+------------------------------
+v < ^ ^ > > v v v < < v > v v v < ^ < < ^ > ^ ^ ^ ^ ^ ^ > > > > v v v > ^ > ^ < ^ > ^ < ^ > ^ < ^ < < v > v v < ^ < v < ^ ^ >
+13x8 (start: 6, 3) | Energy: -31
+....PHP.
+..HHHHHP
+..HHHHHP
+..HHHHHP
+.PHHPPHP
+.PHHHHHP
+.HHHHHHP
+.PHHHPP.
+.PHHH...
+.HPH....
+PH.P....
+PHHH....
+..PP....
+------------------------------
 Sequence of size 85: HHHHPPPPHHHHHHHHHHHHPPPPPPHHHHHHHHHHHHPPPHHHHHHHHHHHHPPPHHHHHHHHHHHHPPPHPPHHPPHHPPHPH
 Best energy: -47
+------------------------------
+v < ^ ^ ^ < v v v v > > v < < v > > v < < < v > > > > ^ ^ ^ ^ ^ ^ > v v v v > ^ ^ ^ ^ ^ < < < ^ > > > > v > ^ ^ < < < < < ^ > > > > > > ^ < < ^ < v < ^ < v < ^ < v v v
+13x10 (start: 6, 3) | Energy: -47
+..PPPPPP..
+..HHHHHHPP
+..PHHHHHHP
+..HHHHHHH.
+.PPHHHHHP.
+.PPHHHHPP.
+.HHHHHH...
+.HHHHHH...
+.HHHHHH...
+.HHHHHP...
+.HHHHPP...
+PPPHH.....
+PPPHH.....
+------------------------------
 Sequence of size 100: PPPHHPPHHHHPPHHHPHHPHHPHHHHPPPPPPPPHHHHHHPPHHHHHHPPPPPPPPPHPHHPHHHHHHHHHHHPPHHHPHHPHPPHPHHHPPPPPPHHH
 Best energy: -42
+------------------------------
+^ ^ < < ^ < v v > > v < < < ^ < v v > > v < < < ^ ^ ^ ^ > ^ < < v v v v v v > > v < < < ^ ^ ^ ^ ^ ^ ^ < ^ < < v > v v > v < v > v v v < ^ ^ < v v v > > > > v < < v > > v < < v > v > > v < < < ^ < ^
+16x12 (start: 4, 11) | Energy: -42
+PPP.........
+PPPPPPP.PP..
+.H.PPPP.HHHP
+.PHPPPPHHHHP
+.PHHHHHHHPPP
+.HHHHHHPH...
+HHHHHHHPH...
+HHHHHHH.....
+HHHHHPP.....
+PPHHH.......
+..HHP.......
+..PHP.......
+..PHP.......
+.HHH........
+.HHHPP......
+..PPPP......
+------------------------------
