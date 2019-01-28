@@ -6,7 +6,7 @@ Chromosome: bool array where array[i] = true means the i-th edge will be present
 Fitness: -inf if (verticesOcurrences != 2) for any vertex else -(sum of edge costs)
 Crossing: switch an edge from u with an edge from v
 Mutation: switch an edge for another
-Selection: sort chromosomes and choose the 0.8 best
+Selection: sort chromosomes and choose the 0.5 best
 Substitution: only the best between new and old population
 */
 
