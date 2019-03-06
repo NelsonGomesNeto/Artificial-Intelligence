@@ -8,7 +8,7 @@ folder = "D:/ProgrammingBigFiles/Generated Numbers/"
 size = 10000
 episodes = 20
 GENERATE = False
-TRAIN = False
+TRAIN = True
 myDigits = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9}
 # myDigits = {5: 0, 6: 1, 7: 2}
 # myDigits = {6: 0, 7: 1}
@@ -21,7 +21,7 @@ print("Generated Numbers: %.5lfs" % (time.time() - startTime))
 database = []
 for i in range(size):
     f = open(folder + "%d.ans" % i, "r")
-    answer = numpy.mat(numpy.zeros((len(myDigits), 1)))
+    answer = numpy.zeros((len(myDigits), 1))
     answer[myDigits[int(f.readline())]] = 1
     database += [[imageGenerator.imageToMatrix(i) / 255, answer]]
     f.close()
@@ -29,7 +29,7 @@ shuffle(database)
 train, test = database[:int(len(database)*0.75)], database[int(len(database)*0.75):]
 
 neuralNetwork = NeuralNetwork([28*28, 28, len(myDigits)], Sigmoid())
-neuralNetwork.load()
+# neuralNetwork.load()
 print("Neural Network layers:", neuralNetwork)
 if (TRAIN):
     startTime, currentTime = time.time(), time.time()

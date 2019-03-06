@@ -8,14 +8,14 @@ class NeuralNetwork:
         self.layers, self.output = len(layersSize) - 1, layersSize[len(layersSize) - 1]
         self.weights, self.weightsNudge = [], []
         self.biases, self.biasesNudge = [], []
-        self.zs, self.activations = [], [numpy.mat(numpy.zeros((layersSize[0], 1)))]
+        self.zs, self.activations = [], [numpy.zeros((layersSize[0], 1))]
         for i in range(len(layersSize) - 1):
             self.weights += [numpy.random.rand(layersSize[i], layersSize[i + 1]).transpose() / 10]
-            self.weightsNudge += [numpy.mat(numpy.zeros((layersSize[i], layersSize[i + 1]))).transpose()]
-            self.zs += [numpy.mat(numpy.zeros((layersSize[i + 1], 1)))]
-            self.activations += [numpy.mat(numpy.zeros((layersSize[i + 1], 1)))]
-            self.biases += [numpy.mat(numpy.zeros((layersSize[i + 1], 1)))]
-            self.biasesNudge += [numpy.mat(numpy.zeros((layersSize[i + 1], 1)))]
+            self.weightsNudge += [numpy.zeros((layersSize[i], layersSize[i + 1])).transpose()]
+            self.zs += [numpy.zeros((layersSize[i + 1], 1))]
+            self.activations += [numpy.zeros((layersSize[i + 1], 1))]
+            self.biases += [numpy.zeros((layersSize[i + 1], 1))]
+            self.biasesNudge += [numpy.zeros((layersSize[i + 1], 1))]
         self.activationFunction = activationFunction
         self.activationFunction.function = numpy.vectorize(self.activationFunction.function)
         self.activationFunction.derivative = numpy.vectorize(self.activationFunction.derivative)
@@ -47,7 +47,7 @@ class NeuralNetwork:
         i = 0
         self.activations[0] = data
         for w, b in zip(self.weights, self.biases):
-            data = w * data + b
+            data = w @ data + b
             self.zs[i] = data
             data = self.activationFunction.function(data)
             i += 1
@@ -58,12 +58,12 @@ class NeuralNetwork:
         self.weightsNudge[self.layers - 1] += delta * self.activations[-2].transpose()
         self.biasesNudge[self.layers - 1] += delta
         for i in range(self.layers - 2, -1, -1):
-            delta = numpy.multiply(self.weights[i + 1].transpose() * delta, self.activationFunction.derivative(self.zs[i]))
+            delta = self.weights[i + 1].transpose() @ delta * self.activationFunction.derivative(self.zs[i])
             self.weightsNudge[i] += delta * self.activations[i].transpose()
             self.biasesNudge[i] += delta
 
     def answerDelta(self, neuralNetworkAnswer, correctAnswer):
-        return(numpy.multiply(2*(neuralNetworkAnswer - correctAnswer), self.activationFunction.derivative(self.zs[-1])))
+        return(2*(neuralNetworkAnswer - correctAnswer) * self.activationFunction.derivative(self.zs[-1]))
 
     def train(self, database, batchSize = 10, verbose = False):
         shuffle(database)

@@ -35,5 +35,5 @@ class ImageGenerator:
         self.counter += 1
 
     def imageToMatrix(self, imageId):
-        image = Image.open(folder + str(imageId) + ".png", "r")
-        return(numpy.matrix(image.getdata()).transpose())
+        with Image.open(folder + str(imageId) + ".png", "r") as image:
+            return(numpy.array(numpy.matrix(numpy.fromstring(image.tobytes(), dtype=numpy.uint8)).transpose()))
