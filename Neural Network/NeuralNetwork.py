@@ -1,10 +1,11 @@
 import numpy
 dataPath = "NeuralNetworkData/"
+from random import shuffle
 
 class NeuralNetwork:
 
     def __init__(self, layersSize, activationFunction):
-        self.layers = len(layersSize) - 1
+        self.layers, self.output = len(layersSize) - 1, layersSize[len(layersSize) - 1]
         self.weights, self.weightsNudge = [], []
         self.biases, self.biasesNudge = [], []
         self.zs, self.activations = [], [numpy.mat(numpy.zeros((layersSize[0], 1)))]
@@ -57,20 +58,17 @@ class NeuralNetwork:
         self.weightsNudge[self.layers - 1] += delta * self.activations[-2].transpose()
         self.biasesNudge[self.layers - 1] += delta
         for i in range(self.layers - 2, -1, -1):
-            delta = self.weights[i + 1].transpose() * delta
+            delta = numpy.multiply(self.weights[i + 1].transpose() * delta, self.activationFunction.derivative(self.zs[i]))
             self.weightsNudge[i] += delta * self.activations[i].transpose()
             self.biasesNudge[i] += delta
 
     def answerDelta(self, neuralNetworkAnswer, correctAnswer):
-        diff = 2*numpy.array(neuralNetworkAnswer - correctAnswer)
-        return(numpy.mat(diff * numpy.array(self.activationFunction.derivative(self.zs[-1]))))
+        return(numpy.multiply(2*(neuralNetworkAnswer - correctAnswer), self.activationFunction.derivative(self.zs[-1])))
 
     def train(self, database, batchSize = 10, verbose = False):
+        shuffle(database)
         total, correct = 0, 0
         while (total < len(database)):
-            for wn, bn in zip(self.weightsNudge, self.biasesNudge):
-                wn *= 0
-                bn *= 0
             for i in range(batchSize):
                 if (total >= len(database)): break
                 answer = self.feedForward(database[total][0].copy())
@@ -81,7 +79,8 @@ class NeuralNetwork:
             for w, b, wn, bn in zip(self.weights, self.biases, self.weightsNudge, self.biasesNudge):
                 w -= wn / batchSize
                 b -= bn / batchSize
-
+                wn *= 0
+                bn *= 0
         return(correct)
 
     def predict(self, database, verbose = False):
