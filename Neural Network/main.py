@@ -7,8 +7,8 @@ from random import shuffle
 folder = "D:/ProgrammingBigFiles/Generated Numbers/"
 size = 10000
 episodes = 20
-GENERATE = True
-TRAIN = True
+GENERATE = False
+TRAIN = False
 myDigits = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9}
 # myDigits = {5: 0, 6: 1, 7: 2}
 # myDigits = {6: 0, 7: 1}
@@ -29,7 +29,7 @@ shuffle(database)
 train, test = database[:int(len(database)*0.75)], database[int(len(database)*0.75):]
 
 neuralNetwork = NeuralNetwork([28*28, 28, len(myDigits)], Sigmoid())
-# neuralNetwork.load()
+neuralNetwork.load()
 print("Neural Network layers:", neuralNetwork)
 if (TRAIN):
     startTime, currentTime = time.time(), time.time()
